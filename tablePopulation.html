@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    #contentTable {
+        margin: auto;
+        padding: 40px;
+        --background-color: #f5f5f5;
+        font-size: 13px;
+    }
+
+    #contentTable .label {
+        width: 120px;
+    }
+
+    #contentTable span {
+        display: inline-block;
+    }
+
+    table#contentTable tr td {
+        width: 50%;
+        ;
+        padding: 12px 0;
+    }
+
+    table#contentTable tr td input,
+    table#contentTable tr td select {
+        width: 140px;
+        padding: 0 5px;
+        height: 24px;
+    }
+
+    table#contentTable tr td select {
+        width: 153px;
+    }
+
+    #contentTable .field_lbl {
+        --width: 40px;
+        font-size: 8px;
+        display: inline;
+    }
+
+    .form_footer input {
+        margin-top: 20px;
+        width: 100px !important;
+    }
+
+    #dataTable {
+        font: normal 40% Arial, Helvetica, sans-serif;
+        border-collapse: separate;
+        width: 100%;
+        color: black;
+        font-size: 70%;
+        font-style: normal;
+        border-spacing: 2px;
+        font: normal 100% Arial, Helvetica, sans-serif;
+        direction: ltr;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    #dataTable th {
+        background: url(images/bg-table-header.png) repeat-x left bottom;
+        font-size: 100%;
+        background-color: #ddd;
+        font-weight: bold;
+    }
+
+    #dataTable td {
+        font-size: 88%;
+    }
+
+    #dataTable tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #dataTable tr:hover {
+        background-color: #ddd;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Build a table</title>
+</head>
+
+<script>
+    function readHolidayTable() {
+        console.log("At readHolidayTable");
+        var table = document.getElementById("dataTable");
+        var xmlText = "<holidays>";
+        var trLine = "";
+
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            //iterate through rows and rows would be accessed using the "row" variable assigned in the for loop
+            if (row.cells[0].nodeName == "TD") {
+                xmlText = xmlText.concat("<holiday>");
+            }
+
+            //console.log(row);
+            //console.log(i, " // ", row.cells[0].nodeName);
+            for (var j = 0, col; col = row.cells[j]; j++) {
+                //iterate through columns and columns would be accessed using the "col" variable assigned in the for loop
+                if (col.nodeName == "TD") {
+                    //console.log("id: ", col.id, " / Column Value: ", col.innerText, " / Name: ", col.attributes[1].nodeValue);
+                    console.log(col);
+                    if (typeof col.childNodes[1] != "undefined") { // checking if it is "select" or not
+                        // this is a "select"
+                        var y = col.childNodes[1].attributes[0].nodeValue;
+                        //console.log("y: ", y);
+                        var innerValue = document.getElementById(y).value;
+                        //console.log("innerValue: ", innerValue);
+                    } else {
+                        // this is NOT a "select"
+                        innerValue = col.innerText;
+                    }
+
+                    trLine = "<" + col.attributes[1].nodeValue + ">" + innerValue + "</" + col.attributes[1].nodeValue + ">";
+                    //console.log("tt: ", tt);
+                    xmlText = xmlText.concat(trLine);
+                }
+
+                //console.log(col);
+                //console.log(col.childNodes);
+            }
+            if (row.cells[0].nodeName == "TD") {
+                xmlText = xmlText.concat("</holiday>");
+            }
+        }
+        xmlText = xmlText.concat("</holidays>")
+        console.log("xmlText: ", xmlText);
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xmlText, "text/xml");
+        console.log("xmlDoc: ", xmlDoc);
+        document.getElementById("xmlDisplay").innerText = xmlText;
+    };
+
+</script>
+
+<body>
+    <h3> TABLE: 1 - Table is dynamically added via "build-table.js" </h3>
+    <table>
+        <!-- Table dynamically generated via "build-table.js" -->
+    </table>
+
+    </br>
+    <h3> TABLE: 2 </h3>
+    <input type="button" value="Traverse" onclick="readHolidayTable();" />
+    <table id="dataTable" width="900px">
+        <caption class="captiontext">Generated CRNs and Subjects</caption>
+        <tbody>
+            <tr>
+                <th class="dataTable" scope="col" name="th">Heading-01</th>
+                <th class="dataTable" scope="col" name="th">Heading-02</th>
+                <th class="dataTable" scope="col" name="th">Heading-03</th>
+                <th class="dataTable" scope="col" name="th">Heading-04 [Select]</th>
+
+            </tr>
+            <tr>
+                <td class="default" name="col1_val" id="1-01">Col-01_01</td>
+                <td class="default" name="col2_val" id="1-02">Col-01_02</td>
+                <td class="default" name="col3_val" id="1-03">Col-01_03</td>
+                <td class="default" name="col4_val" id="1-04">
+                    <select id="1-04-S1" size="1">
+                        <option value="selVal-01" id="1-04-S1-OP1" selected="selected">Valid</option>
+                        <option value="selVal-02" id="1-04-S1-OP2">Overridden</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td class="default" name="col1_val" id="2-01">Col-02_01</td>
+                <td class="default" name="col2_val" id="2-02">Col-02_02</td>
+                <td class="default" name="col3_val" id="2-03">Col-02_03</td>
+                <td class="default" name="col4_val" id="2-04">
+                    <select id="2-04-S1" size="1">
+                        <option value="selVal-01" id="2-04-S1-OP1" selected="selected">Valid</option>
+                        <option value="selVal-02" id="2-04-S1-OP2">Overridden</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td class="default" name="col1_val" id="3-01">Col-03_01</td>
+                <td class="default" name="col2_val" id="3-02">Col-03_02</td>
+                <td class="default" name="col3_val" id="3-03">Col-03_03</td>
+                <td class="default" name="col4_val" id="3-04">
+                    <select id="3-04-S1" size="1">
+                        <option value="selVal-01" id="3-04-S1-OP1">Valid</option>
+                        <option value="selVal-02" id="3-04-S1-OP2" selected="selected">Overridden</option>
+                    </select></td>
+            </tr>
+            <tr>
+                <td class="default" name="col1_val" id="4-01">Col-04_01</td>
+                <td class="default" name="col2_val" id="4-02">Col-04_02</td>
+                <td class="default" name="col3_val" id="4-03">Col-04_03</td>
+                <td class="default" name="col4_val" id="4-04">
+                    <select id="4-04-S1" size="1">
+                        <option value="selVal-01" id="4-04-S1-OP1" selected="selected">Valid</option>
+                        <option value="selVal-02" id="4-04-S1-OP2">Overridden</option>
+                    </select></td>
+        </tbody>
+    </table>
+    <h3> XML Object from TABLE: 2 (Check console for details)</h3>
+    <div id="xmlDisplay">
+
+    </div>
+</body>
+<script src="build-table.js"></script>
+
+</html>
